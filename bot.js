@@ -1,6 +1,8 @@
 const dotenv = require('dotenv')
 const { Client, Intents, IntentsBitField, PermissionFlagsBits } = require('discord.js');
 const { GatewayIntentBits } = require('discord-api-types/v9');
+const {abuseMember} = require('./insults.js')
+const {joke} = require('./jokes.js')
 
 dotenv.config()
 const client = new Client({ 
@@ -36,6 +38,16 @@ const banMember = async(memberToBan,message) =>{
       }
 }
 
+const jokes = async(message) =>{
+    try{
+        const res = await joke();
+        message.reply(res);
+    }
+    catch(err){
+        console.error(err);
+        message.reply("error occoured")
+    }
+}
 
 const prefix = '$'
 
@@ -91,6 +103,33 @@ client.on('messageCreate',async (message)=>{
                     return;
                 } 
                  banMember(memberToBan,message);
+                }
+            }
+
+            // make fun of a member
+            if(cmd=="abuse"){
+                if(!message.guild) return;
+                else if(args.length===0){
+                    message.reply("Please provide appropriate username")
+                }
+                else{
+                    const Mem = message.mentions.members.first();
+                    if(!Mem){
+                        message.reply("No such member exists in the server")
+                        return;
+                    } 
+                     abuseMember(Mem.user.tag,message);
+                }
+            }
+
+            // tell a joke
+            if(cmd==="joke"){
+                if(!message.guild) return;
+                else if(args.length!=0){
+                    message.reply("Please enter the command properly")
+                }
+                else{
+                    jokes(message)
                 }
             }
 
