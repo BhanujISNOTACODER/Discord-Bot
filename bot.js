@@ -12,6 +12,7 @@ const client = new Client({
     IntentsBitField.Flags.GuildMessageReactions,
     IntentsBitField.Flags.GuildMessageTyping,
     IntentsBitField.Flags.GuildScheduledEvents,
+    IntentsBitField.Flags.GuildModeration,
     ]
  });
 
@@ -34,13 +35,14 @@ const banMember = async(memberToBan,message) =>{
       }
 }
 
+
 const prefix = '$'
 
 
 
 client.on('ready',()=>{console.log("I am ready")});
 
-client.on('messageCreate',(message)=>{
+client.on('messageCreate',async (message)=>{
     // check if bot wrote the message
     if(message.author.bot) return;
 
@@ -89,23 +91,6 @@ client.on('messageCreate',(message)=>{
                 }
             }
 
-        // unban a member
-        if(cmd==="unban"){
-            if(!message.member.permissions.has("UNBAN_MEMBERS")){
-                message.reply("You do not have permissions to ban the member")
-            }
-            else if(args.length===0){
-                message.reply("Please provide appropriate username")
-            }
-            else{
-                const memberToBan = message.mentions.members.first();
-                if(!memberToBan){
-                    message.reply("No such member exists in the server")
-                    return;
-                } 
-                 banMember(memberToBan,message);
-                }
-            }
         }
         
     }
