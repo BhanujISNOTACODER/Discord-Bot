@@ -1,5 +1,5 @@
 const dotenv = require('dotenv')
-const { Client, Intents, IntentsBitField } = require('discord.js');
+const { Client, Intents, IntentsBitField, PermissionFlagsBits } = require('discord.js');
 const { GatewayIntentBits } = require('discord-api-types/v9');
 
 dotenv.config()
@@ -13,6 +13,7 @@ const client = new Client({
     IntentsBitField.Flags.GuildMessageTyping,
     IntentsBitField.Flags.GuildScheduledEvents,
     IntentsBitField.Flags.GuildModeration,
+    IntentsBitField.Flags.GuildIntegrations
     ]
  });
 
@@ -56,7 +57,8 @@ client.on('messageCreate',async (message)=>{
 
         // kick command
         if(cmd==="kick"){
-            if(!message.member.permissions.has("KICK_MEMBERS")){
+            if(!message.guild) return;
+            if(!message.member.permissions.has(PermissionFlagsBits.KickMembers)){
                 message.reply("You do not have permissions to kick the user")
             }
             else if(args.length===0){
@@ -75,7 +77,8 @@ client.on('messageCreate',async (message)=>{
         
         // ban a member
         if(cmd==="ban"){
-            if(!message.member.permissions.has("BAN_MEMBERS")){
+            if(!message.guild) return;
+            if(!message.member.permissions.has(PermissionFlagsBits.BanMembers)){
                 message.reply("You do not have permissions to ban the member")
             }
             else if(args.length===0){
