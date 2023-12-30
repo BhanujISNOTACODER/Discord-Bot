@@ -17,11 +17,20 @@ const client = new Client({
 
 const kickMember = async(memberToKick,message) =>{
     try {
-        message.reply(`Successfully removed ${memberToKick.user.tag}.`);
         await memberToKick.kick();
+        message.reply(`Successfully removed ${memberToKick.user.tag}.`);
       } catch (error) {
-        console.error(error);
-        message.reply('Error kicking the member.');
+        message.reply('This member is greater than me.');
+      }
+}
+
+const banMember = async(memberToBan,message) =>{
+    try {
+        await memberToBan.ban();
+        message.reply(`Successfully banned ${memberToBan.user.tag}.`);
+      } catch (error) {
+        console.error(error)
+        message.reply('This member is greater than me.');
       }
 }
 
@@ -42,9 +51,11 @@ client.on('messageCreate',(message)=>{
 
     if(message.content.startsWith(prefix)){
         const [cmd,...args] = message.content.substring(prefix.length).trim().split(/\s+/)
+
+        // kick command
         if(cmd==="kick"){
             if(!message.member.permissions.has("KICK_MEMBERS")){
-                message.reply("You do not have permissions")
+                message.reply("You do not have permissions to kick the user")
             }
             else if(args.length===0){
                 message.reply("Please provide appropriate username")
@@ -56,6 +67,43 @@ client.on('messageCreate',(message)=>{
                     return;
                 } 
                  kickMember(memberToKick,message);
+                }
+            }
+
+        
+        // ban a member
+        if(cmd==="ban"){
+            if(!message.member.permissions.has("BAN_MEMBERS")){
+                message.reply("You do not have permissions to ban the member")
+            }
+            else if(args.length===0){
+                message.reply("Please provide appropriate username")
+            }
+            else{
+                const memberToBan = message.mentions.members.first();
+                if(!memberToBan){
+                    message.reply("No such member exists in the server")
+                    return;
+                } 
+                 banMember(memberToBan,message);
+                }
+            }
+
+        // unban a member
+        if(cmd==="unban"){
+            if(!message.member.permissions.has("UNBAN_MEMBERS")){
+                message.reply("You do not have permissions to ban the member")
+            }
+            else if(args.length===0){
+                message.reply("Please provide appropriate username")
+            }
+            else{
+                const memberToBan = message.mentions.members.first();
+                if(!memberToBan){
+                    message.reply("No such member exists in the server")
+                    return;
+                } 
+                 banMember(memberToBan,message);
                 }
             }
         }
